@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/MovieListFragment">
+
+    <fragment
+        android:id="@+id/MovieListFragment"
+        android:name="com.ltu.m7019e.v23.themoviedb.MovieListFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/fragment_movie_list">
+
+        <action
+            android:id="@+id/action_MovieListFragment_to_MovieDetailFragment"
+            app:destination="@id/MovieDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/MovieDetailFragment"
+        android:name="com.ltu.m7019e.v23.themoviedb.MovieDetailFragment"
+        android:label="@string/second_fragment_label"
+        tools:layout="@layout/fragment_movie_detail">
+
+        <action
+            android:id="@+id/action_MovieDetailFragment_to_MovieListFragment"
+            app:destination="@id/MovieListFragment" />
+        <action
+            android:id="@+id/action_MovieDetailFragment_to_reviews"
+            app:destination="@id/reviews" />
+        <argument
+            android:name="movie"
+            app:argType="com.ltu.m7019e.v23.themoviedb.model.Movie" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviews"
+        android:name="com.ltu.m7019e.v23.themoviedb.MovieReviewFragment"
+        android:label="fragment_reviews"
+        tools:layout="@layout/fragment_movie_review" >
+        <action
+            android:id="@+id/action_reviews_to_MovieDetailFragment"
+            app:destination="@id/MovieDetailFragment" />
+        <argument
+            android:name="movie"
+            app:argType="com.ltu.m7019e.v23.themoviedb.model.Movie" />
+    </fragment>
+</navigation>
