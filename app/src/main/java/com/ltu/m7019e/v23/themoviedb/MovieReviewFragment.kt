@@ -47,6 +47,8 @@ class MovieReviewFragment : Fragment() {
         viewModelFactory = ReviewViewModelFactory(application, movie)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ReviewViewModel::class.java)
 
+        viewModel.addReviews() //TODO: Remove
+
         viewModel.movieReviewList.observe(viewLifecycleOwner){ reviewList ->
             reviewList?.let{
                 reviewsAdapter.submitList(reviewList)

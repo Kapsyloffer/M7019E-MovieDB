@@ -18,12 +18,12 @@
         tools:context=".MovieReviewFragment">
 
 
-        <androidx.recyclerview.widget.RecyclerView
+        <!--<androidx.recyclerview.widget.RecyclerView
             android:id="@+id/review_imgs"
             android:layout_width="411dp"
             android:layout_height="338dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/review_txts"
@@ -31,7 +31,10 @@
             android:layout_height="332dp"
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/back_to_movie_detail"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            android:scrollbars="horizontal"/>
 
         <Button
             android:id="@+id/back_to_movie_detail"
