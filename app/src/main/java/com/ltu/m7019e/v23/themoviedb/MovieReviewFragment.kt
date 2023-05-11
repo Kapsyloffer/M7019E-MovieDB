@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
+import com.ltu.m7019e.v23.themoviedb.database.Review
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieReviewBinding
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 
@@ -40,8 +43,16 @@ class MovieReviewFragment : Fragment() {
 
         binding.movie = movie
 
+        //TODO: fetch reviews, display reviews.
+        getReviews(movie)
+
         return binding.root
 
+    }
+
+    fun getReviews(movie: Movie)
+    {
+        //TODO
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
