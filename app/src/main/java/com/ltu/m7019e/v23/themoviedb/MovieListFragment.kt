@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.ltu.m7019e.v23.themoviedb.adapter.MovieListAdapter
 import com.ltu.m7019e.v23.themoviedb.adapter.MovieListClickListener
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieListBinding
@@ -43,6 +44,7 @@ class MovieListFragment : Fragment() {
         )
 
         binding.movieListRv.adapter = movieListAdapter
+        binding.movieListRv.layoutManager = GridLayoutManager(context, 3);
 
         viewModel.movieList.observe(
             viewLifecycleOwner
@@ -66,23 +68,5 @@ class MovieListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        val movies = Movies()
-//
-//        val movieList = view.findViewById<LinearLayout>(R.id.movie_list_ll)
-//        val movieItem = movieList.findViewById<View>(R.id.movie_1)
-//        val movieTitle = movieItem.findViewById<TextView>(R.id.movie_title)
-//        val moviePoster = movieItem.findViewById<ImageView>(R.id.movie_poster)
-//
-//        movieTitle.text = movies.list[0].title
-//        Glide
-//            .with(this)
-//            .load(Contants.POSTER_IMAGE_BASE_URL + Contants.POSTER_IMAGE_WIDTH + movies.list[0].posterPath)
-//            .into(moviePoster);
-
-
-//        view.findViewById<Button>(R.id.button_first).setOnClickListener {
-//            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
-//        }
     }
 }
