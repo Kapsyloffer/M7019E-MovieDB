@@ -43,8 +43,16 @@ class MovieReviewFragment : Fragment() {
 
         binding.movie = movie
 
-        //TODO: fetch reviews, display reviews.
-        getReviews(movie)
+        // Set up RecyclerView and adapter
+        val reviewsRecyclerView = binding.reviewsRecyclerView
+        val reviewsAdapter = ReviewsAdapter()
+        reviewsRecyclerView.adapter = reviewsAdapter
+
+        // Pass the data to the adapter
+        val reviewsLiveData: LiveData<List<Review>> = getReviews(movie)
+        reviewsLiveData.observe(viewLifecycleOwner, { reviews ->
+            reviewsAdapter.submitList(reviews)
+        })
 
         return binding.root
 
