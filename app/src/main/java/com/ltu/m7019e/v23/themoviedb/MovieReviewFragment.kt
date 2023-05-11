@@ -1,32 +1,25 @@
 package com.ltu.m7019e.v23.themoviedb
 
+import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.ltu.m7019e.v23.themoviedb.database.Review
+import com.ltu.m7019e.v23.themoviedb.adapter.ReviewAdapter
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieReviewBinding
 import com.ltu.m7019e.v23.themoviedb.model.Movie
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MovieReviewFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModel
+import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModelFactory
 class MovieReviewFragment : Fragment() {
     private var _binding: FragmentMovieReviewBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var movie: Movie
+    private lateinit var viewModelFactory : ReviewViewModelFactory
+    private lateinit var viewModel : ReviewViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,21 +37,28 @@ class MovieReviewFragment : Fragment() {
         binding.movie = movie
 
         // Set up RecyclerView and adapter
-        val reviewsRecyclerView = binding.reviewsRecyclerView
-        val reviewsAdapter = ReviewsAdapter()
+        val reviewsRecyclerView = binding.reviewTxts
+        val reviewsAdapter = ReviewAdapter()
         reviewsRecyclerView.adapter = reviewsAdapter
 
-        // Pass the data to the adapter
-        val reviewsLiveData: LiveData<List<Review>> = getReviews(movie)
-        reviewsLiveData.observe(viewLifecycleOwner, { reviews ->
-            reviewsAdapter.submitList(reviews)
-        })
 
+        var application = requireNotNull(this.activity).application
+        // Pass the data to the adapter
+        viewModelFactory = ReviewViewModelFactory(application, movie)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(ReviewViewModel::class.java)
+
+        viewModel.movieReviewList.observe(viewLifecycleOwner){ reviewList ->
+            reviewList?.let{
+                reviewsAdapter.submitList(reviewList)
+            }
+        }
+
+        binding.viewmodel = viewModel
         return binding.root
 
     }
 
-    fun getReviews(movie: Movie)
+    fun getReviews(movie_id: Int)
     {
         //TODO
     }

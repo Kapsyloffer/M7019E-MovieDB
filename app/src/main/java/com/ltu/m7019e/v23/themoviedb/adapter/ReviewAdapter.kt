@@ -4,19 +4,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ltu.m7019e.v23.themoviedb.database.Review
+import com.ltu.m7019e.v23.themoviedb.model.Review
+import com.ltu.m7019e.v23.themoviedb.databinding.ReviewListItemBinding
 
-class ReviewListAdapter() :  ListAdapter<Review, ReviewListAdapter.ViewHolder>(MovieReviewDiffCallback()){
-    class ViewHolder(private var binding: ReviewBinding) : RecyclerView.ViewHolder(binding.root) { //wtf is a reviewbinding
+class ReviewAdapter() :  ListAdapter<Review, ReviewAdapter.ViewHolder>(MovieReviewDiffCallback()){
+    class ViewHolder(private var binding: ReviewListItemBinding) : RecyclerView.ViewHolder(binding.root) { //wtf is a reviewbinding
 
         fun bind(_review: Review) {
-            binding.Review = _review
+            binding.review = _review
         }
 
         companion object {
             fun from(parent: ViewGroup) : ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val binding = ReviewBinding.inflate(layoutInflater, parent, false)
+                val binding = ReviewListItemBinding.inflate(layoutInflater, parent, false)
                 return ViewHolder(binding)
             }
         }

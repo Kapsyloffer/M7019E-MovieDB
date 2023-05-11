@@ -7,6 +7,9 @@
         <variable
             name="movie"
             type="com.ltu.m7019e.v23.themoviedb.model.Movie" />
+        <variable
+            name="viewmodel"
+            type="com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModel"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,14 +19,14 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reviewsRecyclerView"
+            android:id="@+id/review_imgs"
             android:layout_width="411dp"
             android:layout_height="338dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reviewsRecyclerView2"
+            android:id="@+id/review_txts"
             android:layout_width="411dp"
             android:layout_height="332dp"
             android:layout_marginBottom="5dp"
