@@ -30,11 +30,11 @@
             android:layout_width="411dp"
             android:layout_height="332dp"
             android:layout_marginBottom="5dp"
-            app:layout_constraintBottom_toTopOf="@+id/back_to_movie_detail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="horizontal"
-            android:scrollbars="horizontal"/>
+            android:scrollbars="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/back_to_movie_detail"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/back_to_movie_detail"
@@ -45,5 +45,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backdropImageUrl="@{movie.backdropPath}"
+            android:layout_marginBottom="210dp"
+            app:layout_constraintBottom_toTopOf="@+id/review_txts"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
