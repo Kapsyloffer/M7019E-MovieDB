@@ -47,7 +47,7 @@ class MovieReviewFragment : Fragment() {
         viewModelFactory = ReviewViewModelFactory(application, movie)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ReviewViewModel::class.java)
 
-        viewModel.addReviews() //TODO: Remove
+        viewModel.getReviews(movie)
 
         viewModel.movieReviewList.observe(viewLifecycleOwner){ reviewList ->
             reviewList?.let{
@@ -58,11 +58,6 @@ class MovieReviewFragment : Fragment() {
         binding.viewmodel = viewModel
         return binding.root
 
-    }
-
-    fun getReviews(movie_id: Int)
-    {
-        //TODO
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Review(
         @Json(name = "id")
-        var id: Int,
+        var id: String,
         @Json(name = "author")
         var author: String,
         @Json(name = "content")

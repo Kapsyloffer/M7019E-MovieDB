@@ -8,9 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieDetailBinding
 import com.ltu.m7019e.v23.themoviedb.model.Movie
+import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
+import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieDetailsViewModel
+import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieDetailsViewModelFactory
+import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModel
+import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModelFactory
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -21,6 +27,9 @@ class MovieDetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var movie: Movie
+    private lateinit var viewModelFactory : MovieDetailsViewModelFactory
+    private lateinit var viewModel : MovieDetailsViewModel
+
     private lateinit var reviewBtn : Button
     private lateinit var imdbBtn : Button
 
@@ -32,6 +41,11 @@ class MovieDetailFragment : Fragment() {
         _binding = FragmentMovieDetailBinding.inflate(inflater)
         movie = MovieDetailFragmentArgs.fromBundle(requireArguments()).movie
         binding.movie = movie
+
+        var application = requireNotNull(this.activity).application
+        viewModelFactory = MovieDetailsViewModelFactory(application)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MovieDetailsViewModel::class.java)
+
 
         return binding.root
 
@@ -52,7 +66,7 @@ class MovieDetailFragment : Fragment() {
         }
 
         binding.imdbBtn.setOnClickListener{
-            val imdbUrl = "https://www.imdb.com/title/tt" + movie.id
+            val imdbUrl = "https://imdb.com/title/" + viewModel.fetchIMDB(movie)// makeIMDBLink(movie)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imdbUrl))
             startActivity(intent)
         }

@@ -54,7 +54,6 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
                 when (mode) {
                     0 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getPopularMovies().results)
-                        Log.i(list.size.toString(), TMDBApi.movieListRetrofitService.getPopularMovies().results.toString())
                     }
                     1 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)

@@ -24,17 +24,27 @@
             tools:src="@tools:sample/avatars" />
 
 
-
         <TextView
             android:id="@+id/movie_detail_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="80dp"
             android:text="@{movie.title}"
-            android:textSize="18sp"
+            android:textSize="34sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop"
+            tools:text="TITLE" />
+
+        <TextView
+            android:id="@+id/movieOverview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:text="@{movie.overview}"
+            app:layout_constraintStart_toStartOf="@+id/movie_detail_title"
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_title" />
 
         <Button
             android:id="@+id/back_to_movie_list"
@@ -48,7 +58,7 @@
             android:id="@+id/reviewBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button"
+            android:text="Reviews"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -56,7 +66,7 @@
             android:id="@+id/imdbBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
+            android:layout_marginTop="24dp"
             android:text="IMDB"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
