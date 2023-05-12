@@ -7,6 +7,6 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 class MovieResponse
 {
-     @Json(name = "Results")
+     @Json(name = "results")
      var results : List<Movie> = listOf()
 }

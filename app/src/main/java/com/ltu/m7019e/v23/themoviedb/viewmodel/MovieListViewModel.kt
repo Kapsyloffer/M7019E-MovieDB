@@ -2,6 +2,7 @@ package com.ltu.m7019e.v23.themoviedb.viewmodel
 
 import android.app.AlertDialog
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,7 +31,7 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
         get() = _movieList
 
     init {
-        setMovieList(getMovies(0))
+        getMovies(0)
     }
 
     fun onMovieListItemClicked(movie: Movie) {
@@ -46,15 +47,14 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
         _movieList.value = list;
     }
 
-    fun getMovies(mode : Int) : List<Movie>
-    {
-        val list = mutableListOf<Movie>()
+    fun getMovies(mode: Int) {
         viewModelScope.launch {
             try {
-                when(mode)
-                {
+                val list = mutableListOf<Movie>()
+                when (mode) {
                     0 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getPopularMovies().results)
+                        Log.i(list.size.toString(), TMDBApi.movieListRetrofitService.getPopularMovies().results.toString())
                     }
                     1 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)
@@ -63,10 +63,10 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
                         //Saved (todo)
                     }
                 }
+                setMovieList(list)
             } catch (NetworkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)
             }
         }
-        return list;
     }
 }

@@ -85,15 +85,15 @@ class MovieListFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.action_load_popular_movies -> {
                         lastSelectedMenuOption = R.id.action_load_popular_movies
-                        viewModel.setMovieList(viewModel.getMovies(0))
+                        viewModel.getMovies(0)
                     }
                     R.id.action_load_top_rated_movies -> {
                         lastSelectedMenuOption = R.id.action_load_top_rated_movies
-                        viewModel.setMovieList(viewModel.getMovies(1))
+                        viewModel.getMovies(1)
                     }
                     R.id.action_load_saved_movies -> {
                         lastSelectedMenuOption = R.id.action_load_saved_movies
-                        viewModel.setMovieList(viewModel.getMovies(2))
+                        viewModel.getMovies(2)
                     }
                 }
                 return true
