@@ -11,29 +11,15 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
-/**
- * Build the Moshi object that Retrofit will be using, making sure to add the Kotlin adapter for
- * full Kotlin compatibility.
- */
 private val moshi = Moshi.Builder()
     .add(KotlinJsonAdapterFactory())
     .build()
 
-
-/**
- * Add a httpclient logger for debugging purpose
- * object.
- */
 fun getLoggerIntercepter(): HttpLoggingInterceptor {
     val logging = HttpLoggingInterceptor()
     logging.level = HttpLoggingInterceptor.Level.BODY
     return logging
 }
-
-/**
- * Use the Retrofit builder to build a retrofit object using a Moshi converter with our Moshi
- * object.
- */
 
 private val movieListRetrofit = Retrofit.Builder()
     .client(

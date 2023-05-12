@@ -15,9 +15,6 @@ import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieListBinding
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModel
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModelFactory
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class MovieListFragment : Fragment() {
 
     private lateinit var viewModel: MovieListViewModel
@@ -88,14 +85,15 @@ class MovieListFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.action_load_popular_movies -> {
                         lastSelectedMenuOption = R.id.action_load_popular_movies
-                        viewModel.getMovies(true)
+                        viewModel.setMovieList(viewModel.getMovies(0))
                     }
                     R.id.action_load_top_rated_movies -> {
                         lastSelectedMenuOption = R.id.action_load_top_rated_movies
-                        viewModel.getMovies(false)
+                        viewModel.setMovieList(viewModel.getMovies(1))
                     }
                     R.id.action_load_saved_movies -> {
                         lastSelectedMenuOption = R.id.action_load_saved_movies
+                        viewModel.setMovieList(viewModel.getMovies(2))
                     }
                 }
                 return true
