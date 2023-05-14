@@ -18,6 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:backdropImageUrl="@{movie.backdropPath}"
+            android:contentDescription="@{movie.title}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -40,11 +41,11 @@
             android:id="@+id/movieOverview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:text="@{movie.overview}"
             app:layout_constraintStart_toStartOf="@+id/movie_detail_title"
-            app:layout_constraintTop_toBottomOf="@+id/movie_detail_title" />
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_title"
+            tools:text="TEXT" />
 
         <Button
             android:id="@+id/back_to_movie_list"
@@ -58,7 +59,7 @@
             android:id="@+id/reviewBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reviews"
+            android:text="@string/reviews"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -67,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="IMDB"
+            android:text="@string/imdb"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop" />

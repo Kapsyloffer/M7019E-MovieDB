@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieDetailBinding
 import com.ltu.m7019e.v23.themoviedb.model.Movie
@@ -17,6 +18,8 @@ import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieDetailsViewModel
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieDetailsViewModelFactory
 import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModel
 import com.ltu.m7019e.v23.themoviedb.viewmodel.ReviewViewModelFactory
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -66,9 +69,12 @@ class MovieDetailFragment : Fragment() {
         }
 
         binding.imdbBtn.setOnClickListener{
-            val imdbUrl = "https://imdb.com/title/" + viewModel.fetchIMDB(movie)// makeIMDBLink(movie)
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imdbUrl))
-            startActivity(intent)
+            lifecycleScope.launch {
+                val imdbId = async { viewModel.fetchIMDB(movie) }.await()
+                val imdbUrl = "https://imdb.com/title/$imdbId"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imdbUrl))
+                startActivity(intent)
+            }
         }
     }
 }
