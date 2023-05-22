@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
+import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -49,6 +50,10 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getMovies(mode: Int) {
         viewModelScope.launch {
+            if(!NetworkStatus.isInternetAvailable(getApplication<Application>().applicationContext))
+            {
+                return@launch
+            }
             try {
                 val list = mutableListOf<Movie>()
                 when (mode) {
