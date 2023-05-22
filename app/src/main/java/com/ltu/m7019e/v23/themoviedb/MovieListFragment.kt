@@ -1,6 +1,7 @@
 package com.ltu.m7019e.v23.themoviedb
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.core.view.MenuHost
@@ -22,6 +23,8 @@ class MovieListFragment : Fragment() {
 
     private var _binding: FragmentMovieListBinding? = null
     private val binding get() = _binding!!
+
+    private var latest : Int = 0
 
     private var lastSelectedMenuOption = R.id.action_load_popular_movies;
 
@@ -85,14 +88,17 @@ class MovieListFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.action_load_popular_movies -> {
                         lastSelectedMenuOption = R.id.action_load_popular_movies
+                        latest = 0
                         viewModel.getMovies(0)
                     }
                     R.id.action_load_top_rated_movies -> {
                         lastSelectedMenuOption = R.id.action_load_top_rated_movies
+                        latest = 1
                         viewModel.getMovies(1)
                     }
                     R.id.action_load_saved_movies -> {
                         lastSelectedMenuOption = R.id.action_load_saved_movies
+                        latest = 2
                         viewModel.getMovies(2)
                     }
                 }
@@ -100,4 +106,10 @@ class MovieListFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
+    override fun onResume() {
+        super.onResume()
+        Log.i("Latest: ", latest.toString())
+        viewModel.getMovies(latest)
+    }
+
 }
