@@ -6,7 +6,7 @@ import com.ltu.m7019e.v23.themoviedb.model.*
 
 @Dao
 interface MoviesDao {
-    // Movie
+    // Cached movies
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(movie: Movie)
 
@@ -22,7 +22,7 @@ interface MoviesDao {
     @Query("SELECT * from movies ORDER BY id ASC")
     fun getAllMovies(): LiveData<List<Movie>>
 
-    // saved movie
+    // Saved movies
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(savedMovie: SavedMovie)
 

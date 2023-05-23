@@ -48,7 +48,8 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
 
     private fun setMovieList(movieList: List<Movie>) {
         viewModelScope.launch(Dispatchers.Main) {
-            _movieList.postValue(movieList)
+            Log.i("List: ", movieList.toString())
+            _movieList.value = movieList
         }
     }
 
@@ -65,15 +66,16 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                 when (mode) {
                     0 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getPopularMovies().results)
+                        setMovieList(list)
                     }
                     1 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)
+                        setMovieList(list)
                     }
                     2 -> {
                         getSaved()
                     }
                 }
-                setMovieList(list)
             } catch (networkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)
             }
@@ -94,8 +96,8 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                         overview = savedMovie.overview
                     )
                 )
-                Log.i("a", list.toString())
             }
+            Log.i("LISTAN\n\n", list.toString())
             setMovieList(list)
         }
     }
