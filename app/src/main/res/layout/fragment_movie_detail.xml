@@ -13,12 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MovieDetailFragment">
+
         <ImageView
             android:id="@+id/movie_detail_backdrop"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:backdropImageUrl="@{movie.backdropPath}"
+            android:layout_height="128dp"
+            android:layout_marginTop="64dp"
             android:contentDescription="@{movie.title}"
+            app:backdropImageUrl="@{movie.backdropPath}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -70,6 +72,20 @@
             android:layout_marginTop="24dp"
             android:text="@string/imdb"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.294"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop" />
+
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/save"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.693"
+            app:layout_constraintStart_toEndOf="@+id/imdbBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/movie_detail_backdrop" />
     </androidx.constraintlayout.widget.ConstraintLayout>

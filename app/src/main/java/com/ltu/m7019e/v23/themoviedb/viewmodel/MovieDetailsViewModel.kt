@@ -11,6 +11,7 @@ import com.ltu.m7019e.v23.themoviedb.database.*
 import com.ltu.m7019e.v23.themoviedb.model.*
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -52,12 +53,28 @@ class MovieDetailsViewModel(application: Application, private val Dao : MoviesDa
         }
     }
 
-    fun unsaveMovie(movie: SavedMovie)
+    fun unsaveMovie(id : Long)
     {
         viewModelScope.launch(Dispatchers.IO)
         {
-            Dao.delete(movie)
+            Dao.delete(id)
         }
+    }
+
+    suspend fun isSaved(movie: Movie): Boolean {
+        val deferred = CompletableDeferred<Boolean>()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            for (m in Dao.getAllSavedMovies()) {
+                if (movie.id == m.id) {
+                    deferred.complete(true)
+                    Log.i("A", "FOUND true")
+                    return@launch
+                }
+            }
+            deferred.complete(false)
+        }
+        return deferred.await()
     }
 }
 

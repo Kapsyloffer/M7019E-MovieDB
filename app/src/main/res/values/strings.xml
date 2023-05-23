@@ -7,6 +7,8 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="reviews">Reviews</string>
+    <string name="save">Save</string>
+    <string name="unsave">Unsave</string>
     <string name="imdb">IMDB</string>
 
     <string name="action_load_popular_movies">Popular Movies</string>

@@ -26,8 +26,8 @@ interface MoviesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(savedMovie: SavedMovie)
 
-    @Delete
-    fun delete(savedMovie: SavedMovie)
+    @Query("DELETE FROM savedMovies WHERE id = :id")
+    fun delete(id: Long)
 
     @Query("SELECT EXISTS(SELECT * from savedMovies WHERE id = :id)")
     suspend fun isFavorite(id: Long): Boolean

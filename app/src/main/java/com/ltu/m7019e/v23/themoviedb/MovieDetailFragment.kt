@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,7 @@ class MovieDetailFragment : Fragment() {
 
     private lateinit var reviewBtn : Button
     private lateinit var imdbBtn : Button
+    private lateinit var saveBtn : Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +68,7 @@ class MovieDetailFragment : Fragment() {
 
         reviewBtn = binding.reviewBtn
         imdbBtn = binding.imdbBtn
+        saveBtn = binding.saveBtn
 
         binding.backToMovieList.setOnClickListener {
             findNavController().navigate(MovieDetailFragmentDirections.actionMovieDetailFragmentToMovieListFragment())
@@ -76,13 +79,39 @@ class MovieDetailFragment : Fragment() {
         }
 
         binding.imdbBtn.setOnClickListener{
-            viewModel.saveMovie(movie)
             lifecycleScope.launch {
                 val imdbId = async { viewModel.fetchIMDB(movie) }.await()
                 val imdbUrl = "https://imdb.com/title/$imdbId"
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imdbUrl))
                 startActivity(intent)
             }
+        }
+
+        binding.saveBtn.setOnClickListener{
+            lifecycleScope.launch {
+                Log.i("a", "CLICKED" + viewModel.isSaved(movie).toString())
+                ToggleButton(!viewModel.isSaved(movie))
+                if(viewModel.isSaved(movie))
+                {
+                    viewModel.unsaveMovie(movie.id)
+                }
+                else
+                {
+                    viewModel.saveMovie(movie)
+                }
+            }
+        }
+    }
+
+    fun ToggleButton(b: Boolean)
+    {
+        if(b)
+        {
+            saveBtn.text= "unsave"
+        }
+        else
+        {
+            saveBtn.text= "save"
         }
     }
 }
