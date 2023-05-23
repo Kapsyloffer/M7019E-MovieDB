@@ -15,7 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-class MovieDetailsViewModel(application: Application) : AndroidViewModel(application) {
+class MovieDetailsViewModel(application: Application, private val Dao : MoviesDao) : AndroidViewModel(application) {
 
     private val _dataFetchStatus = MutableLiveData<DataFetchStatus>()
     val dataFetchStatus: LiveData<DataFetchStatus>
@@ -29,7 +29,6 @@ class MovieDetailsViewModel(application: Application) : AndroidViewModel(applica
         try {
             val id = TMDBApi.movieListRetrofitService.getMovieDetails(movie.id.toLong()).imdb_id
             Log.i("IMDB: ", id.toString())
-            //saveMovie(movie, Movies.getInstance(getApplication<Application>().applicationContext).moviesDao())
             return id
         } catch (error: NetworkErrorException) {
             Log.e("Error", error.toString())
@@ -37,10 +36,10 @@ class MovieDetailsViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun saveMovie(movie: Movie, moviesDao: MoviesDao) {
+    fun saveMovie(movie: Movie) {
         viewModelScope.launch(Dispatchers.IO)
         {
-            moviesDao.insert(
+            Dao.insert(
                 SavedMovie(
                     id = movie.id,
                     title = movie.title,
@@ -53,11 +52,11 @@ class MovieDetailsViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun unsaveMovie(movie: SavedMovie, moviesDao: MoviesDao)
+    fun unsaveMovie(movie: SavedMovie)
     {
         viewModelScope.launch(Dispatchers.IO)
         {
-            moviesDao.delete(movie)
+            Dao.delete(movie)
         }
     }
 }

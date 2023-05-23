@@ -1,5 +1,6 @@
 package com.ltu.m7019e.v23.themoviedb
 
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.widget.Button
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.ltu.m7019e.v23.themoviedb.database.Movies
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieDetailBinding
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
@@ -33,6 +35,8 @@ class MovieDetailFragment : Fragment() {
     private lateinit var viewModelFactory : MovieDetailsViewModelFactory
     private lateinit var viewModel : MovieDetailsViewModel
 
+    private lateinit var database : Movies
+
     private lateinit var reviewBtn : Button
     private lateinit var imdbBtn : Button
 
@@ -46,7 +50,10 @@ class MovieDetailFragment : Fragment() {
         binding.movie = movie
 
         var application = requireNotNull(this.activity).application
-        viewModelFactory = MovieDetailsViewModelFactory(application)
+
+        database = Movies.getInstance(requireNotNull(this.activity).application)
+
+        viewModelFactory = MovieDetailsViewModelFactory(application, database.moviesDao)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieDetailsViewModel::class.java)
 
 
@@ -69,6 +76,7 @@ class MovieDetailFragment : Fragment() {
         }
 
         binding.imdbBtn.setOnClickListener{
+            viewModel.saveMovie(movie)
             lifecycleScope.launch {
                 val imdbId = async { viewModel.fetchIMDB(movie) }.await()
                 val imdbUrl = "https://imdb.com/title/$imdbId"

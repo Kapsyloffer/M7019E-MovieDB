@@ -7,10 +7,10 @@ import androidx.room.RoomDatabase
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.model.SavedMovie
 
-@Database(entities = [Movie::class, SavedMovie::class], version = 0, exportSchema = false)
+@Database(entities = [Movie::class, SavedMovie::class], version = 2, exportSchema = false)
 abstract class Movies : RoomDatabase() {
 
-    abstract fun moviesDao(): MoviesDao
+    abstract val moviesDao : MoviesDao
 
     companion object {
         @Volatile

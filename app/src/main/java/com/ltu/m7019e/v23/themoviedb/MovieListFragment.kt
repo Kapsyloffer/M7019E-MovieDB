@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.work.impl.constraints.trackers.NetworkStateTracker
 import com.ltu.m7019e.v23.themoviedb.adapter.MovieListAdapter
 import com.ltu.m7019e.v23.themoviedb.adapter.MovieListClickListener
+import com.ltu.m7019e.v23.themoviedb.database.Movies
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieListBinding
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModel
@@ -30,6 +31,8 @@ class MovieListFragment : Fragment() {
 
     private var lastSelectedMenuOption = R.id.action_load_popular_movies;
 
+    private lateinit var database : Movies
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,8 +41,10 @@ class MovieListFragment : Fragment() {
         _binding = FragmentMovieListBinding.inflate(inflater)
 
         val application = requireNotNull(this.activity).application
+        database = Movies.getInstance(requireNotNull(this.activity).application)
 
-        viewModelFactory = MovieListViewModelFactory(application)
+
+        viewModelFactory = MovieListViewModelFactory(application, database.moviesDao)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         val movieListAdapter = MovieListAdapter(

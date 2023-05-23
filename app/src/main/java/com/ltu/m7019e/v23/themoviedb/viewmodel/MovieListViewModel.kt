@@ -1,6 +1,7 @@
 package com.ltu.m7019e.v23.themoviedb.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,10 +12,12 @@ import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class MovieListViewModel(application: Application) : AndroidViewModel(application) {
+class MovieListViewModel(application: Application, private val Dao : MoviesDao) : AndroidViewModel(application) {
 
     private val _dataFetchStatus = MutableLiveData<DataFetchStatus>()
     val dataFetchStatus: LiveData<DataFetchStatus>
@@ -43,21 +46,21 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
         _navigateToMovieDetail.value = null
     }
 
-    fun setMovieList(list : List<Movie>)
-    {
-        _movieList.value = list;
+    private fun setMovieList(movieList: List<Movie>) {
+        viewModelScope.launch(Dispatchers.Main) {
+            _movieList.postValue(movieList)
+        }
     }
 
     fun getMovies(mode: Int) {
         viewModelScope.launch {
             var context = getApplication<Application>().applicationContext
-            //var moviesDao: MoviesDao = MovieDatabase.getInstance(context).moviesDao()
-            if(!NetworkStatus.isInternetAvailable(context))
+            if (!NetworkStatus.isInternetAvailable(context))
             {
+                //getCached()
                 return@launch
             }
             try {
-                //moviesDao.deleteAllMovies()
                 val list = mutableListOf<Movie>()
                 when (mode) {
                     0 -> {
@@ -67,14 +70,33 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
                         list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)
                     }
                     2 -> {
-                        //Saved (todo)
+                        fetchSaved()
                     }
                 }
-                //moviesDao.insertAll(list);
                 setMovieList(list)
-            } catch (NetworkError: IOException) {
+            } catch (networkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)
             }
+        }
+    }
+
+    private suspend fun fetchSaved() {
+        withContext(Dispatchers.IO) {
+            val list = mutableListOf<Movie>()
+            for (savedMovie in Dao.getAllSavedMovies()) {
+                list.add(
+                    Movie(
+                        id = savedMovie.id,
+                        title = savedMovie.title,
+                        posterPath = savedMovie.posterPath,
+                        backdropPath = savedMovie.backdropPath,
+                        releaseDate = savedMovie.releaseDate,
+                        overview = savedMovie.overview
+                    )
+                )
+                Log.i("a", list.toString())
+            }
+            setMovieList(list)
         }
     }
 }

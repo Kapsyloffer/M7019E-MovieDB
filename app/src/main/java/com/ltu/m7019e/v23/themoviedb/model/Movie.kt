@@ -4,8 +4,9 @@ package com.ltu.m7019e.v23.themoviedb.model
 import android.os.Parcelable
 import androidx.room.*
 import com.squareup.moshi.Json
-import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.*
 @Parcelize
+@Entity(tableName = "movies")
 data class Movie(
         @PrimaryKey
         @Json(name = "id")

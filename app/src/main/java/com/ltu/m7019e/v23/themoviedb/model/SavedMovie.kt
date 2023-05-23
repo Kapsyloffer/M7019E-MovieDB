@@ -6,6 +6,7 @@ import androidx.room.*
 import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
 @Parcelize
+@Entity(tableName = "savedMovies")
 data class SavedMovie(
         @PrimaryKey
         @Json(name = "id")
