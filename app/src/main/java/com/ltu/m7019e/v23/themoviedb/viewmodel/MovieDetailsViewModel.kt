@@ -7,9 +7,11 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.ltu.m7019e.v23.themoviedb.model.Movie
+import com.ltu.m7019e.v23.themoviedb.database.*
+import com.ltu.m7019e.v23.themoviedb.model.*
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -24,15 +26,39 @@ class MovieDetailsViewModel(application: Application) : AndroidViewModel(applica
         get() = _imdbLiveData
 
     suspend fun fetchIMDB(movie: Movie): String {
-        return try {
+        try {
             val id = TMDBApi.movieListRetrofitService.getMovieDetails(movie.id.toLong()).imdb_id
             Log.i("IMDB: ", id.toString())
-            id
+            //saveMovie(movie, Movies.getInstance(getApplication<Application>().applicationContext).moviesDao())
+            return id
         } catch (error: NetworkErrorException) {
             Log.e("Error", error.toString())
-            "Error"
+            return "Error"
         }
     }
 
+    fun saveMovie(movie: Movie, moviesDao: MoviesDao) {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            moviesDao.insert(
+                SavedMovie(
+                    id = movie.id,
+                    title = movie.title,
+                    posterPath = movie.posterPath,
+                    backdropPath = movie.backdropPath,
+                    releaseDate = movie.releaseDate,
+                    overview = movie.overview
+                )
+            )
+        }
+    }
+
+    fun unsaveMovie(movie: SavedMovie, moviesDao: MoviesDao)
+    {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            moviesDao.delete(movie)
+        }
+    }
 }
 

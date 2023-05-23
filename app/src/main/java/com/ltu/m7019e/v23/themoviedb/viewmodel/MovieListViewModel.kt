@@ -1,12 +1,12 @@
 package com.ltu.m7019e.v23.themoviedb.viewmodel
 
-import android.app.AlertDialog
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.ltu.m7019e.v23.themoviedb.database.Movies
+import com.ltu.m7019e.v23.themoviedb.database.MoviesDao
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
@@ -50,11 +50,14 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getMovies(mode: Int) {
         viewModelScope.launch {
-            if(!NetworkStatus.isInternetAvailable(getApplication<Application>().applicationContext))
+            var context = getApplication<Application>().applicationContext
+            //var moviesDao: MoviesDao = MovieDatabase.getInstance(context).moviesDao()
+            if(!NetworkStatus.isInternetAvailable(context))
             {
                 return@launch
             }
             try {
+                //moviesDao.deleteAllMovies()
                 val list = mutableListOf<Movie>()
                 when (mode) {
                     0 -> {
@@ -67,6 +70,7 @@ class MovieListViewModel(application: Application) : AndroidViewModel(applicatio
                         //Saved (todo)
                     }
                 }
+                //moviesDao.insertAll(list);
                 setMovieList(list)
             } catch (NetworkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)

@@ -5,31 +5,28 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ltu.m7019e.v23.themoviedb.model.Movie
+import com.ltu.m7019e.v23.themoviedb.model.SavedMovie
 
-@Database(entities = [Movie::class], version = 0, exportSchema = false)
-abstract class MovieDatabase : RoomDatabase() {
+@Database(entities = [Movie::class, SavedMovie::class], version = 0, exportSchema = false)
+abstract class Movies : RoomDatabase() {
+
     abstract fun moviesDao(): MoviesDao
 
     companion object {
         @Volatile
-        private var INSTANCE: MovieDatabase? = null
+        private var INSTANCE: Movies? = null
 
-        fun getInstance(context: Context): MovieDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        MovieDatabase::class.java,
-                        "cached_movies"
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    INSTANCE = instance
-                }
-
-                return instance
+        fun getInstance(context: Context): Movies {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    Movies::class.java,
+                    "cached_movies"
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                instance
             }
         }
     }
