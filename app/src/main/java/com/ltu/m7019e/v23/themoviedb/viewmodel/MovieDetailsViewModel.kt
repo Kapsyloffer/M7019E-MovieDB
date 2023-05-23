@@ -14,6 +14,7 @@ import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class MovieDetailsViewModel(application: Application, private val Dao : MoviesDao) : AndroidViewModel(application) {
@@ -64,17 +65,18 @@ class MovieDetailsViewModel(application: Application, private val Dao : MoviesDa
     suspend fun isSaved(movie: Movie): Boolean {
         val deferred = CompletableDeferred<Boolean>()
 
-        viewModelScope.launch(Dispatchers.IO) {
-            for (m in Dao.getAllSavedMovies()) {
+        withContext(Dispatchers.IO) {
+            Dao.getAllSavedMovies().forEach { m ->
                 if (movie.id == m.id) {
                     deferred.complete(true)
                     Log.i("A", "FOUND true")
-                    return@launch
+                    return@withContext
                 }
             }
             deferred.complete(false)
         }
         return deferred.await()
     }
+
 }
 

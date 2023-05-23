@@ -69,6 +69,9 @@ class MovieDetailFragment : Fragment() {
         reviewBtn = binding.reviewBtn
         imdbBtn = binding.imdbBtn
         saveBtn = binding.saveBtn
+        lifecycleScope.launch {
+            ToggleButton(viewModel.isSaved(movie))
+        }
 
         binding.backToMovieList.setOnClickListener {
             findNavController().navigate(MovieDetailFragmentDirections.actionMovieDetailFragmentToMovieListFragment())

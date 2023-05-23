@@ -70,7 +70,7 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                         list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)
                     }
                     2 -> {
-                        fetchSaved()
+                        getSaved()
                     }
                 }
                 setMovieList(list)
@@ -80,7 +80,7 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
         }
     }
 
-    private suspend fun fetchSaved() {
+    private suspend fun getSaved() {
         withContext(Dispatchers.IO) {
             val list = mutableListOf<Movie>()
             for (savedMovie in Dao.getAllSavedMovies()) {
