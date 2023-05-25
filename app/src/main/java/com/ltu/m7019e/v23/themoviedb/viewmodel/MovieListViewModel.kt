@@ -50,7 +50,7 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
 
     private fun setMovieList(movieList: List<Movie>) {
         viewModelScope.launch(Dispatchers.Main) {
-            Log.i("List: ", movieList.toString())
+            //Log.i("List: ", movieList.toString())
             _movieList.value = movieList
         }
     }
