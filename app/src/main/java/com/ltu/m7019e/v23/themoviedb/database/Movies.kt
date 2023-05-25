@@ -24,6 +24,7 @@ abstract class Movies : RoomDatabase() {
                     "cached_movies"
                 )
                     .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
                     .build()
                 INSTANCE = instance
                 instance

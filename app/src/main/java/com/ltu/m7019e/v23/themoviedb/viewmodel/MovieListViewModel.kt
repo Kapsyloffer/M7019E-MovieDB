@@ -87,6 +87,10 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                         getSaved()
                     }
                 }
+                Dao.deleteAllMovies()
+                list.forEach{movie ->
+                    Dao.insert(movie)
+                }
                 //cacheList()
             } catch (networkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)
@@ -110,6 +114,10 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                 )
             }
             Log.i("LISTAN\n\n", list.toString())
+            Dao.deleteAllMovies()
+            list.forEach{movie ->
+                Dao.insert(movie)
+            }
             setMovieList(list)
         }
     }
