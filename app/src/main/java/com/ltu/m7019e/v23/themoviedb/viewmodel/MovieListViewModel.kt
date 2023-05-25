@@ -6,7 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.ltu.m7019e.v23.themoviedb.database.Movies
+import androidx.work.*
 import com.ltu.m7019e.v23.themoviedb.database.MoviesDao
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
@@ -30,12 +30,14 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
     // Use a MutableLiveData object for the movie list
     private val _movieList = MutableLiveData<List<Movie>>()
 
+    private var latest = 0;
+
     // Expose a LiveData object for the movie list that can be observed by the UI
     val movieList: LiveData<List<Movie>>
         get() = _movieList
 
     init {
-        getMovies(0)
+        getMovies(null)
     }
 
     fun onMovieListItemClicked(movie: Movie) {
@@ -53,17 +55,26 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
         }
     }
 
-    fun getMovies(mode: Int) {
+    fun getMovies(mode: Int?)
+    {
+        if(mode == null)
+        {
+            getMovies(latest)
+            return
+        }
+        latest = mode;
         viewModelScope.launch {
             var context = getApplication<Application>().applicationContext
-            if (!NetworkStatus.isInternetAvailable(context))
+            var hasInternet = NetworkStatus.isInternetAvailable(context)
+            if (!hasInternet)
             {
                 //getCached()
                 return@launch
             }
             try {
                 val list = mutableListOf<Movie>()
-                when (mode) {
+                when (mode)
+                {
                     0 -> {
                         list.addAll(TMDBApi.movieListRetrofitService.getPopularMovies().results)
                         setMovieList(list)
@@ -76,6 +87,7 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
                         getSaved()
                     }
                 }
+                //cacheList()
             } catch (networkError: IOException) {
                 _dataFetchStatus.postValue(DataFetchStatus.Error)
             }
@@ -99,6 +111,29 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
             }
             Log.i("LISTAN\n\n", list.toString())
             setMovieList(list)
+        }
+    }
+
+    //Crashes, idk why
+    private suspend fun cacheList() {
+        withContext(Dispatchers.IO) {
+            _movieList.value?.let { movieList ->
+                Dao.deleteAllMovies()
+                for (movie in movieList) {
+                    viewModelScope.launch {
+                        Dao.insert(
+                            Movie(
+                                id = movie.id,
+                                title = movie.title,
+                                posterPath = movie.posterPath,
+                                backdropPath = movie.backdropPath,
+                                releaseDate = movie.releaseDate,
+                                overview = movie.overview
+                            )
+                        )
+                    }
+                }
+            }
         }
     }
 }
