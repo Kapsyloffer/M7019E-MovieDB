@@ -11,7 +11,12 @@ import java.io.IOException
 
 class MovieRepo(private val database: Movies)
 {
-    private var movieList: LiveData<List<Movie>> = database.moviesDao.getAllMovies();
+    // Expose a LiveData object for the movie list that can be observed by the UI
+    val movieList: LiveData<List<Movie>>
+        get() = _movieList
+
+
+    private var _movieList: LiveData<List<Movie>> = database.moviesDao.getAllMovies();
 
     suspend fun getMovies(mode: Int)
     {

@@ -7,9 +7,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.*
-import com.ltu.m7019e.v23.themoviedb.database.MoviesDao
+import com.ltu.m7019e.v23.themoviedb.database.*
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
+import com.ltu.m7019e.v23.themoviedb.repository.MovieRepo
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
 import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
 import kotlinx.coroutines.Dispatchers
@@ -17,8 +18,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class MovieListViewModel(application: Application, private val Dao : MoviesDao) : AndroidViewModel(application) {
+class MovieListViewModel(application: Application, private val database : Movies) : AndroidViewModel(application) {
 
+    // Create an instance of MovieRepo by passing the required dependencies
+    val movieRepo = MovieRepo(database)
+    val Dao : MoviesDao = database.moviesDao
     private val _dataFetchStatus = MutableLiveData<DataFetchStatus>()
     val dataFetchStatus: LiveData<DataFetchStatus>
         get() = _dataFetchStatus
@@ -32,12 +36,8 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
 
     private var latest = 0;
 
-    // Expose a LiveData object for the movie list that can be observed by the UI
-    val movieList: LiveData<List<Movie>>
-        get() = _movieList
-
     init {
-        getMovies(null)
+        getMovies(latest)
     }
 
     fun onMovieListItemClicked(movie: Movie) {
@@ -55,93 +55,10 @@ class MovieListViewModel(application: Application, private val Dao : MoviesDao) 
         }
     }
 
-    fun getMovies(mode: Int?)
+    fun getMovies(mode: Int)
     {
-        if(mode == null)
-        {
-            getMovies(latest)
-            return
-        }
-        latest = mode;
         viewModelScope.launch {
-            var context = getApplication<Application>().applicationContext
-            var hasInternet = NetworkStatus.isInternetAvailable(context)
-            if (!hasInternet)
-            {
-                //getCached()
-                return@launch
-            }
-            try {
-                val list = mutableListOf<Movie>()
-                when (mode)
-                {
-                    0 -> {
-                        list.addAll(TMDBApi.movieListRetrofitService.getPopularMovies().results)
-                        setMovieList(list)
-                    }
-                    1 -> {
-                        list.addAll(TMDBApi.movieListRetrofitService.getTopRatedMovies().results)
-                        setMovieList(list)
-                    }
-                    2 -> {
-                        getSaved()
-                    }
-                }
-                Dao.deleteAllMovies()
-                list.forEach{movie ->
-                    Dao.insert(movie)
-                }
-                //cacheList()
-            } catch (networkError: IOException) {
-                _dataFetchStatus.postValue(DataFetchStatus.Error)
-            }
-        }
-    }
-
-    private suspend fun getSaved() {
-        withContext(Dispatchers.IO) {
-            val list = mutableListOf<Movie>()
-            for (savedMovie in Dao.getAllSavedMovies()) {
-                list.add(
-                    Movie(
-                        id = savedMovie.id,
-                        title = savedMovie.title,
-                        posterPath = savedMovie.posterPath,
-                        backdropPath = savedMovie.backdropPath,
-                        releaseDate = savedMovie.releaseDate,
-                        overview = savedMovie.overview
-                    )
-                )
-            }
-            Log.i("LISTAN\n\n", list.toString())
-            Dao.deleteAllMovies()
-            list.forEach{movie ->
-                Dao.insert(movie)
-            }
-            setMovieList(list)
-        }
-    }
-
-    //Crashes, idk why
-    private suspend fun cacheList() {
-        withContext(Dispatchers.IO) {
-            _movieList.value?.let { movieList ->
-                Dao.deleteAllMovies()
-                for (movie in movieList) {
-                    viewModelScope.launch {
-                        Dao.insert(
-                            Movie(
-                                id = movie.id,
-                                title = movie.title,
-                                posterPath = movie.posterPath,
-                                backdropPath = movie.backdropPath,
-                                releaseDate = movie.releaseDate,
-                                overview = movie.overview
-                            )
-                        )
-                    }
-                }
-            }
+            MovieRepo(database).getMovies(mode)
         }
     }
 }

@@ -16,6 +16,7 @@ import com.ltu.m7019e.v23.themoviedb.adapter.MovieListClickListener
 import com.ltu.m7019e.v23.themoviedb.database.Movies
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieListBinding
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
+import com.ltu.m7019e.v23.themoviedb.repository.MovieRepo
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModel
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModelFactory
 
@@ -33,6 +34,8 @@ class MovieListFragment : Fragment() {
 
     private lateinit var database : Movies
 
+    private lateinit var repo : MovieRepo
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,9 +45,10 @@ class MovieListFragment : Fragment() {
 
         val application = requireNotNull(this.activity).application
         database = Movies.getInstance(requireNotNull(this.activity).application)
+        repo = MovieRepo(database)
 
 
-        viewModelFactory = MovieListViewModelFactory(application, database.moviesDao)
+        viewModelFactory = MovieListViewModelFactory(application, database)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MovieListViewModel::class.java)
 
         val movieListAdapter = MovieListAdapter(
@@ -56,7 +60,7 @@ class MovieListFragment : Fragment() {
         binding.movieListRv.adapter = movieListAdapter
         binding.movieListRv.layoutManager = GridLayoutManager(context, 3);
 
-        viewModel.movieList.observe(
+        repo.movieList.observe(
             viewLifecycleOwner
         ) { movieList ->
             movieList?.let {
