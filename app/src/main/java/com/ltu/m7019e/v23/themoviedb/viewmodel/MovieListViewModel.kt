@@ -1,7 +1,7 @@
 package com.ltu.m7019e.v23.themoviedb.viewmodel
 
+import Refresher
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,12 +10,10 @@ import androidx.work.*
 import com.ltu.m7019e.v23.themoviedb.database.*
 import com.ltu.m7019e.v23.themoviedb.model.Movie
 import com.ltu.m7019e.v23.themoviedb.network.DataFetchStatus
-import com.ltu.m7019e.v23.themoviedb.repository.MovieRepo
 import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
-import com.ltu.m7019e.v23.themoviedb.network.TMDBApi
+import com.ltu.m7019e.v23.themoviedb.repository.MovieRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class MovieListViewModel(application: Application, private val database : Movies) : AndroidViewModel(application) {
@@ -36,6 +34,9 @@ class MovieListViewModel(application: Application, private val database : Movies
 
     private var latest = 0;
 
+    val getLatest : Int
+        get() = latest
+
     init {
         getMovies(latest)
     }
@@ -55,10 +56,30 @@ class MovieListViewModel(application: Application, private val database : Movies
         }
     }
 
-    fun getMovies(mode: Int)
+    fun getMovies(mode: Int?)
     {
-        viewModelScope.launch {
-            MovieRepo(database).getMovies(mode)
+        if(mode != null)
+        {
+            latest = mode
+        }
+            viewModelScope.launch {
+                var context = getApplication<Application>().applicationContext;
+                val constraints = Constraints.Builder()
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
+                    .build()
+
+                val workRequest: WorkRequest = OneTimeWorkRequestBuilder<Refresher>()
+                    .setConstraints(constraints)
+                    .build()
+                    movieRepo.getMovies(latest, context)
+                if(NetworkStatus.isInternetAvailable(context))
+                {
+                    WorkManager.getInstance(getApplication()).cancelAllWork()
+                }
+                else
+                {
+                    WorkManager.getInstance(getApplication()).enqueue(workRequest)
+                }
+            }
         }
     }
-}

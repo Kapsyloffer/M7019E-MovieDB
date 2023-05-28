@@ -1,5 +1,8 @@
 package com.ltu.m7019e.v23.themoviedb.repository
 
+import android.app.Application
+import android.content.Context
+import android.net.Network
 import android.util.Log
 import androidx.lifecycle.LiveData
 import com.ltu.m7019e.v23.themoviedb.database.*
@@ -18,41 +21,46 @@ class MovieRepo(private val database: Movies)
 
     private var _movieList: LiveData<List<Movie>> = database.moviesDao.getAllMovies();
 
-    suspend fun getMovies(mode: Int)
+    suspend fun getMovies(mode: Int, context: Context)
     {
-        withContext(Dispatchers.IO)
+        if(NetworkStatus.isInternetAvailable(context))
         {
-            var list = listOf<Movie>()
-            try {
-                when (mode) {
-                    0 -> {
-                        list = TMDBApi.movieListRetrofitService.getPopularMovies().results
-                    }
-                    1 -> {
-                        list = TMDBApi.movieListRetrofitService.getTopRatedMovies().results
-                    }
-                    2 -> {
-                        list = database.moviesDao.getAllSavedMovies().map { savedMovie ->
-                            Movie(
-                                id = savedMovie.id,
-                                title = savedMovie.title,
-                                posterPath = savedMovie.posterPath,
-                                backdropPath = savedMovie.backdropPath,
-                                releaseDate = savedMovie.releaseDate,
-                                overview = savedMovie.overview
-                            )
+            withContext(Dispatchers.IO)
+            {
+                var list = listOf<Movie>()
+                try {
+                    when (mode) {
+                        0 -> {
+                            list = TMDBApi.movieListRetrofitService.getPopularMovies().results
+                        }
+                        1 -> {
+                            list = TMDBApi.movieListRetrofitService.getTopRatedMovies().results
+                        }
+                        2 -> {
+                            list = database.moviesDao.getAllSavedMovies().map { savedMovie ->
+                                Movie(
+                                    id = savedMovie.id,
+                                    title = savedMovie.title,
+                                    posterPath = savedMovie.posterPath,
+                                    backdropPath = savedMovie.backdropPath,
+                                    releaseDate = savedMovie.releaseDate,
+                                    overview = savedMovie.overview
+                                )
+                            }
                         }
                     }
+                } catch (Error: IOException) {
+                    list = requireNotNull(database.moviesDao.getAllMovies().value)
+                }
+                database.moviesDao.deleteAllMovies()
+                list.forEach { movie ->
+                    database.moviesDao.insert(movie)
                 }
             }
-            catch (Error: IOException)
-            {
-                list = requireNotNull(database.moviesDao.getAllMovies().value)
-            }
-            database.moviesDao.deleteAllMovies()
-            list.forEach{movie ->
-                database.moviesDao.insert(movie)
-            }
+        }
+        else
+        {
+
         }
     }
 }
