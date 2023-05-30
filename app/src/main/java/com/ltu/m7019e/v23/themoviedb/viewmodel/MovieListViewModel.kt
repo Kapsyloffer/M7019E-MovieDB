@@ -72,6 +72,7 @@ class MovieListViewModel(application: Application, private val database : Movies
                 .setConstraints(constraints)
                 .build()
                 movieRepo.getMovies(latest, context)
+
             if(NetworkStatus.isInternetAvailable(context))
             {
                 WorkManager.getInstance(getApplication()).cancelAllWork()
