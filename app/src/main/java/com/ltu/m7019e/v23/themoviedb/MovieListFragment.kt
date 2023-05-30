@@ -14,6 +14,7 @@ import com.ltu.m7019e.v23.themoviedb.adapter.MovieListAdapter
 import com.ltu.m7019e.v23.themoviedb.adapter.MovieListClickListener
 import com.ltu.m7019e.v23.themoviedb.database.Movies
 import com.ltu.m7019e.v23.themoviedb.databinding.FragmentMovieListBinding
+import com.ltu.m7019e.v23.themoviedb.network.NetworkStatus
 import com.ltu.m7019e.v23.themoviedb.repository.MovieRepo
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModel
 import com.ltu.m7019e.v23.themoviedb.viewmodel.MovieListViewModelFactory
@@ -23,8 +24,11 @@ class MovieListFragment : Fragment() {
     private lateinit var viewModel: MovieListViewModel
     private lateinit var viewModelFactory: MovieListViewModelFactory
 
+
     private var _binding: FragmentMovieListBinding? = null
     private val binding get() = _binding!!
+
+
 
     private var latest : Int = 0
 
@@ -81,7 +85,6 @@ class MovieListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // The usage of an interface lets you inject your own implementation
         val menuHost: MenuHost = requireActivity()
-
         // Add menu items without using the Fragment Menu APIs
         // Note how we can tie the MenuProvider to the viewLifecycleOwner
         // and an optional Lifecycle.State (here, RESUMED) to indicate when
@@ -93,6 +96,7 @@ class MovieListFragment : Fragment() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                InternetRaptor()
                 // Handle the menu selection
                 when (menuItem.itemId) {
                     R.id.action_load_popular_movies -> {
@@ -117,8 +121,23 @@ class MovieListFragment : Fragment() {
     }
     override fun onResume() {
         super.onResume()
+        InternetRaptor()
         Log.i("Latest: ", latest.toString())
         viewModel.getMovies(latest)
+    }
+
+    fun InternetRaptor()
+    {
+        var status = NetworkStatus.isInternetAvailable(requireNotNull(this.activity).application)
+        val noInternetImageView = binding.noInternet
+        if(status)
+        {
+            noInternetImageView.visibility = View.INVISIBLE
+        }
+        else
+        {
+            noInternetImageView.visibility = View.VISIBLE
+        }
     }
 
 }

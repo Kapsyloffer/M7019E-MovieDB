@@ -62,24 +62,24 @@ class MovieListViewModel(application: Application, private val database : Movies
         {
             latest = mode
         }
-            viewModelScope.launch {
-                var context = getApplication<Application>().applicationContext;
-                val constraints = Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build()
+        viewModelScope.launch {
+            var context = getApplication<Application>().applicationContext;
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
 
-                val workRequest: WorkRequest = OneTimeWorkRequestBuilder<Refresher>()
-                    .setConstraints(constraints)
-                    .build()
-                    movieRepo.getMovies(latest, context)
-                if(NetworkStatus.isInternetAvailable(context))
-                {
-                    WorkManager.getInstance(getApplication()).cancelAllWork()
-                }
-                else
-                {
-                    WorkManager.getInstance(getApplication()).enqueue(workRequest)
-                }
+            val workRequest: WorkRequest = OneTimeWorkRequestBuilder<Refresher>()
+                .setConstraints(constraints)
+                .build()
+                movieRepo.getMovies(latest, context)
+            if(NetworkStatus.isInternetAvailable(context))
+            {
+                WorkManager.getInstance(getApplication()).cancelAllWork()
+            }
+            else
+            {
+                WorkManager.getInstance(getApplication()).enqueue(workRequest)
             }
         }
     }
+}
